@@ -96,53 +96,65 @@ const getAllReservations = function (guest_id, limit = 10) {
  * @return {Promise<[{}]>}  A promise to the properties.
  */
 
-const getAllProperties = function (options, limit = 10) {
+const getAllProperties = function(options, limit = 10) {
+  //Setup an array to hold any parameters that may be available for the query
   const queryParams = [];
   
+  //Start the query with all information that comes before the WHERE clause
   let queryString = `
   SELECT properties.*, avg(property_reviews.rating) as average_rating
   FROM properties
   JOIN property_reviews ON properties.id = property_id
   `;
 
+  //Check if a city has been passed in as an option
   if (options.city) {
+    //Add the city to the params array and create a WHERE clause for the city
     queryParams.push(`%${options.city}%`);
     queryString += `WHERE city ILIKE $${queryParams.length} `;
   }
-  
+  //Check if an owner_id has been passed in as an option
   if (options.owner_id) {
+    //Check if the params array is empty. If empty start with WHERE, if not - add AND to the query
     queryParams.length === 0 ?  queryString += `WHERE ` : queryString += `AND `;
+    // Add the owner_id to the params array
     queryParams.push(options.owner_id);
     queryString += `owner_id = $${queryParams.length} `;
   }
 
   if (options.minimum_price_per_night) {
+    //Check if the params array is empty. If empty start with WHERE, if not - add AND to the query
     queryParams.length === 0 ?  queryString += `WHERE ` : queryString += `AND `;
+    // Add the minimum_price_per_night to the params array
     queryParams.push(options.minimum_price_per_night);
     queryString += `cost_per_night/100 > $${queryParams.length} `;
   }
 
   if (options.maximum_price_per_night) {
+    //Check if the params array is empty. If empty start with WHERE, if not - add AND to the query
     queryParams.length === 0 ?  queryString += `WHERE ` : queryString += `AND `;
+    // Add the maximum_price_per_night to the params array
     queryParams.push(options.maximum_price_per_night);
     queryString += `cost_per_night/100 < $${queryParams.length} `;
   }
-
+  //Query that comes after the WHERE clause
   queryString += `
   GROUP BY properties.id`;
     
   if (options.minimum_rating) {
+    // Add the minimum_rating to the params array and create a HAVING clause
     queryParams.push(options.minimum_rating);
     queryString += `
     HAVING avg(property_reviews.rating) >= $${queryParams.length} `;
   }
 
+  // Add limit to the params array
   queryParams.push(limit);
   queryString += `
   ORDER BY cost_per_night
   LIMIT $${queryParams.length};
   `;
-  
+  //Run the query
   return pool.query(queryString, queryParams).then((res) => res.rows);
 };
 
