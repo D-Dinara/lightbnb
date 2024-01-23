@@ -9,6 +9,7 @@ A simple multi-page Airbnb clone that uses server-side JavaScript to display inf
 ![The my reservations page](/docs/lightbnb-my-reservations.png)
 ![The new listing page](/docs/lightbnb-new-listing.png)
 ![The search page](/docs/lightbnb-search.png)
+![The ERD](/docs/lightbnb_ERD.png)
 
 ## Functionality Developed
 
