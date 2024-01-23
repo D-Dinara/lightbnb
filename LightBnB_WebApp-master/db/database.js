@@ -1,6 +1,6 @@
 const db = require('./index');
 
-/// Users
+// Users
 
 /**
  * Get a single user from the database given their email.
@@ -15,7 +15,7 @@ const getUserWithEmail = function (email) {
     WHERE email = $1
     `, [email.toLowerCase()])
     .then(res =>  {
-      if (!res) {
+      if (res.rows.length === 0) {
         return null;
       } else {
         return res.rows[0];
@@ -39,7 +39,7 @@ const getUserWithId = function(id) {
     WHERE id = $1
     `, [id])
     .then(res =>  {
-      if (!res) {
+      if (res.rows.length === 0) {
         return null;
       } else {
         return res.rows[0];
@@ -63,7 +63,7 @@ const addUser = function (user) {
     RETURNING *;
     `, [user.name, user.email, user.password])
     .then(res =>  {
-      if (!res) {
+      if (res.rows.length === 0) {
         return null;
       } else {
         return res.rows[0];
@@ -92,7 +92,7 @@ const getAllReservations = function (guest_id, limit = 10) {
     ORDER BY reservations.start_date
     LIMIT $2;`, [guest_id, limit])
     .then(res =>  {
-      if (!res) {
+      if (res.rows.length === 0) {
         return null;
       } else {
         return res.rows;
@@ -191,7 +191,7 @@ const addProperty = function (property) {
     RETURNING *;
     `, [property.owner_id, property.title, property.description, property.thumbnail_photo_url, property.cover_photo_url, property.cost_per_night, property.parking_spaces, property.number_of_bathrooms, property. number_of_bedrooms, property.country, property.street, property.city, property.province, property.post_code])
     .then(res =>  {
-      if (!res) {
+      if (res.rows.length === 0) {
         return null;
       } else {
         return res.rows[0];

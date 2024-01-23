@@ -8,6 +8,7 @@ const router = express.Router();
 router.post("/", (req, res) => {
   const user = req.body;
   user.password = bcrypt.hashSync(user.password, 12);
+  if (!user.email || !user.password || !user.username) return res.send({ error: "no user with that id" });
   database
     .addUser(user)
     .then((user) => {
